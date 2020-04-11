@@ -1,0 +1,20 @@
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+    vertical-align: middle;
+}
+.btn-primary {
+background: #255969;
+}
+#footer {
+    text-align: center;
+    font-size: small;
+    position: fixed;
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+    bottom: 0;
+    background: #255969;
+    color: white;
+}
+body > div.container {
+    margin-bottom: 40px;
+}
