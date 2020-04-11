@@ -35,6 +35,7 @@ class Auth {
                 return $_SESSION['user']['level'];
         }
 
+
         /**
          * performs login and returns success
          *
@@ -43,17 +44,30 @@ class Auth {
          * @return bool if the login was sucessful
          */
         function login($username, $password){
+                // ******************ldap config*****************
+                $srv = "dc.ksc.loc";  // DC address
+                $uname = $username."@ksc.loc"; // ldap username with read permissions
+                $upasswd = $password;  // ldap user password
+                $dn = "dc=ksc,dc=loc"; // main DN for binding
+                //***********************************************
+                $ds=ldap_connect($srv);
+                if (!$ds) return false;
+                $r=ldap_bind($ds, $uname, $upasswd);
+                if (!$r) return false;
                 $db = new Database();
                 $rs = $db->query("SELECT * FROM user WHERE username = '" . mysqli_real_escape_string($db,$username) . "'")->fetch_assoc();
-                if(empty($rs)) return false;
+//              if(empty($rs)) return false;
+                if(empty($rs)) {
+                    $rs = $db->query("SELECT * FROM user WHERE username = 'domain user'")->fetch_assoc();
+                }
 
                 $user = $rs;
-                $hash = hash('sha512', $user['level'].'g$6|@#'.$user['id'].$password);
+//              $hash = hash('sha512', $user['level'].'g$6|@#'.$user['id'].$password);
 
-                if($user['password'] == $hash) {
+//              if($user['password'] == $hash) {
                         $_SESSION['user'] = $user;
                         return true;
-                }
+//              }
 
                 return false;
         }
@@ -69,6 +83,13 @@ class Auth {
                 return $_SESSION['user']['username'];
         }
 }
+
+
+
+
+
+
+
         /**
          * stolen from https://stackoverflow.com/questions/2040240/php-function-to-generate-v4-uuid
          * but it may not even be used right now
