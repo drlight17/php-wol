@@ -17,4 +17,37 @@ background: #255969;
 }
 body > div.container {
     margin-bottom: 40px;
+/*    margin-top: 40px;*/
+}
+#title {
+    text-align: center;
+    font-size: x-large;
+/*    position: fixed;*/
+/*    top: 0;*/
+    width: 100%;
+    z-index: 100;
+    background: white;
+}
+body > div.container > div.btn-group.pull-right{
+    position: sticky;
+    z-index: 100;
+    top: 0px;
+}
+body > div.container > div.pull-left {
+    position: sticky;
+    top: 0px;
+    margin-top: 10px;
+    margin-bottom: -43px;
+    height: 33px;
+    width: 100%;
+    z-index: 100;
+    background: white;
+/*    box-shadow: 0 0 10px 10px #ffffff;*/
+}
+.table>thead {
+    box-shadow: 0 0 10px 10px #ffffff;
+    background: white;
+}
+.table>thead>tr>th {
+    border-bottom: none!important;
 }
