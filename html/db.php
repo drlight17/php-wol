@@ -1,14 +1,13 @@
 <?php
 class Database extends mysqli{
-        private $servername = "dc.domain";
+        private $servername = "hostname.ltd";
         private $username = "user";
-        private $password = "passwd";
+        private $password = "pass";
         private $database = "php-wol";
         private $mysqli;
-//      default web gui user is "domain user" with level 1 rights and it is added on db creation - do not remove it!
+//      web gui user is every ldap user which is not in the database with level 1 rights
 //      default web gui administrator is ldap Administrator account with level 3 rights
-//      feel free to add more admin account(s) from your ldap with level 3 rights manually
-//      no more user with other level right needed
+//      feel free to add more admin or extended user account(s) from your ldap with level 3 and 2 respectively rights manually
 
         function __construct() {
                 // Create connection
@@ -45,8 +44,7 @@ CREATE TABLE user (
   username varchar(30) NOT NULL UNIQUE,
   level int NOT NULL
 );
-INSERT INTO user VALUES (1, 'domain user', 1);
-INSERT INTO user VALUES (2, 'Administrator', 3);
+INSERT INTO user VALUES (1, 'Administrator', 3);
                 ";
                 $this->multi_query($query);
         }
