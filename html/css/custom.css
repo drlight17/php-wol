@@ -4,7 +4,7 @@
 .btn-primary {
 background: #255969;
 }
-#footer {
+/*#footer {
     text-align: center;
     font-size: small;
     position: fixed;
@@ -14,6 +14,23 @@ background: #255969;
     bottom: 0;
     background: #255969;
     color: white;
+}*/
+
+#footer {
+    text-align: center;
+    font-size: small;
+    position: fixed;
+    font-weight: bold;
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+    bottom: 0;
+    /* background: #255969; */
+    box-shadow: 0 0 10px 10px #ffffff;
+    background: white;
+    /*height: 35px;*/
+    width: 100%;
+    color: black;
 }
 body > div.container {
     margin-bottom: 40px;
