@@ -53,10 +53,10 @@ class Auth {
          */
         function login($username, $password){
                 // ******************ldap config*****************
-                $srv = "dc.ksc.loc";  // DC address
-                $uname = $username."@ksc.loc"; // ldap username with read permissions
+                $srv = "dc.domain.ltd";  // DC address
+                $uname = $username."@domain.ltd"; // ldap username with read permissions
                 $upasswd = $password;  // ldap user password
-                $dn = "dc=ksc,dc=loc"; // main DN for binding
+                $dn = "dc=domain,dc=ltd"; // main DN for binding
                 //***********************************************
                 $ds=ldap_connect($srv);
                 if (!$ds) return false;
