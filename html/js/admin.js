@@ -11,22 +11,23 @@ function getServers(){
                         const thisServer = servers[server];
                         var row = $("<tr><td>" + thisServer.name + "</td><td>" + thisServer.ip + "</td><td></td><td></td></tr>");
                         var col = $('<div class="btn-group"/>');
-//                      var addbutton = $('body > div.container > div.btn-group.pull-right > button.btn.btn-success.require-level-2');
-                        col.append('<a class="btn btn-primary"><i class="glyphicon glyphicon-off"></i> Разбудить</a>').children().click(function(){wake(thisServer);});
+                        col.append('<a class="btn btn-primary"><i class="glyphicon glyphicon-play"></i> Разбудить</a>').children().click(function(){wake(thisServer);});
                         col.append($('<a class="btn btn-default"><i class="glyphicon glyphicon-refresh"></i> Обновить</a>').click(function(){ping(thisServer);}));
 
                         if(level > 1){
+                                col.append($('<a class="btn btn-primary off require-level-2"><i class="glyphicon glyphicon-off"></i> Выключить</a>').addClass(thisServer.name).click(function(){shutdown(thisServer);}));
 
+                        }
+                        if(level > 2){
+        var addbutton = $('body > div.container > div.btn-group.pull-right > button.btn.btn-success.require-level-3');
                                 var btngrp = $('<div class="btn-group"><a class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a><ul class="dropdown-menu" role="menu"></ul></div>');
-        var addbutton = $('body > div.container > div.btn-group.pull-right > button.btn.btn-success.require-level-2');
-
                                 btngrp.children("ul").append($('<li><a><i class="glyphicon glyphicon-pencil"></i> Редактировать</a></li>').click(function(){edit(thisServer);}));
                                 btngrp.children("ul").append($('<li><a><i class="glyphicon glyphicon-trash"></i> Удалить</a></li>').click(function(){remove(thisServer);}));
+                        }
 
-                                col.append(btngrp);
-                        } /*else {
-;                           addbutton.hide();
-*/                      }
+                        col.append(btngrp);
+
+
 
                         row.children(':last').append(col);
                         $("#serverlist").append(row);
@@ -117,6 +118,8 @@ function wake(server) {
                 });
 }
 
+
+
 function ping(server){
         server.statusField.html("Проверка...");
         server.statusField.css({color:"blue"});
@@ -174,6 +177,40 @@ function login(){
                 });
 }
 
+function shutdown(server) {
+        $.post("shutdown.php", {ip:server.ip})
+                .done(function(data){
+                    if(data.response == "success"){
+                        bootbox.alert("Команда выключения компьютера успешно выполнена. Попробуйте обновить статус через несколько секунд.");
+                        ping(server);
+                        var repl = $("." + server.name);
+                        repl.replaceWith($('<a class="btn btn-primary abort-off require-level-2"><i class="glyphicon glyphicon-remove"></i> Отменить выключение</a>').addClass(server.name).click(function(){abortShutdown(server);}));
+                    } else {
+                        bootbox.alert("Команда выключения компьютера не выполнена! Может быть компьютер уже выключен?");
+                    }
+                })
+                .fail(function(data){
+                        bootbox.alert("Ошибка:" + data.status);
+                });
+}
+
+function abortShutdown(server) {
+        $.post("abort-shutdown.php", {ip:server.ip})
+                .done(function(data){
+                    if(data.response == "success"){
+                        bootbox.alert("Команда отмены выключения компьютера успешно выполнена.");
+                        ping(server);
+                        var repl = $("." + server.name);
+                        repl.replaceWith($('<a class="btn btn-primary off require-level-2"><i class="glyphicon glyphicon-off"></i> Выключить</a>').addClass(server.name).click(function(){shutdown(server);}));
+                    } else {
+                        bootbox.alert("Команда отмены выключения компьютера не выполнена! Может быть компьютер уже выключен?");
+                    }
+                })
+                .fail(function(data){
+                        bootbox.alert("Ошибка:" + data.status);
+                });
+}
+
 function showLogin(nocheck = false){
         if(nocheck){
                 alert ("Не введены или не верные данные авторизации!");
@@ -187,12 +224,15 @@ function showLogin(nocheck = false){
                                 $("#login-modal").modal({backdrop: 'static', keyboard: false});
                                 }
                         else {
-                                usernameDisplay.html("Вы вошли как: "+ "<strong>" + data.response.username + "</strong>");
                                 level = data.response.level;
+                                if (level == 1) leveltext="пользователь";
+                                if (level == 2) leveltext="продвинутый";
+                                if (level == 3) leveltext="админ";
+                                usernameDisplay.html("Вы вошли как: "+ "<strong>" + data.response.username + "</strong> | Уровень доступа: "+ "<strong>" + leveltext);
                                 $('.require-level-2').css({display:(level >= 2)});
                                 $('.require-level-1').css({display:(level >= 1)});
                                 $('.require-level-3').css({display:(level >= 3)});
-                                if(level<=1) {addbutton.hide()} else {addbutton.show()};
+                                if(level<3) {addbutton.hide()} else {addbutton.show()};
                                 getServers();
                         }
                 });
@@ -200,7 +240,7 @@ function showLogin(nocheck = false){
 
 window.onload = function(){
         //level = data.response.level;
-        addbutton = $('body > div.container > div.btn-group.pull-right > button.btn.btn-success.require-level-2');
+        addbutton = $('body > div.container > div.btn-group.pull-right > button.btn.btn-success.require-level-3');
         //if (level<=1) addbutton.hide();
         level = 0;
         serverName = $("#name");
@@ -210,6 +250,5 @@ window.onload = function(){
         broadcast = $("#broadcast");
         usernameDisplay = $('#username-display');
         password = $('#password');
-
         showLogin();
 }
