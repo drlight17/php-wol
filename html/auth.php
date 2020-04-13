@@ -18,18 +18,26 @@ class Auth {
          * Levels:
          * 0 - Not authenticated
          * 1 - Basic user (View)
-         * 2 - Manage Servers (Add, Remove, Edit)
-         * 3 - Admin (Everything)
+         * 2 - Skilled user (1 + turn Off PC)
+         * 3 - Admin (2 + Manage servers (Add, Remove ,Edit))
          * @param $min minimum level required to to that action
          */
-        function hasLevel($min = 1) {
+/*      function hasLevel($min = 1) {
                 if(empty($_SESSION['user'])) return $min <= 0;
+
                 return $_SESSION['user']['level'] >= $min;
+*/      }
+        function hasLevel($min){
+                if(empty($_SESSION['user'])) return 0;
+                if ($_SESSION['user']['level']>=$min) return true;
+                return false;
         }
+
 
         /**
          * @return the access level of the user
          */
+
         function getLevel(){
                 if(empty($_SESSION['user'])) return 0;
                 return $_SESSION['user']['level'];
@@ -58,18 +66,19 @@ class Auth {
                 $rs = $db->query("SELECT * FROM user WHERE username = '" . mysqli_real_escape_string($db,$username) . "'")->fetch_assoc();
 //              if(empty($rs)) return false;
                 if(empty($rs)) {
-                    $rs = $db->query("SELECT * FROM user WHERE username = 'domain user'")->fetch_assoc();
-                }
-
+//                  $rs = $db->query("SELECT * FROM user WHERE username = 'domain user'")->fetch_assoc();
+                    $rs = array('id'=>null,'username'=>$username,'level'=>1);
+                };
                 $user = $rs;
 //              $hash = hash('sha512', $user['level'].'g$6|@#'.$user['id'].$password);
 
 //              if($user['password'] == $hash) {
-                        $_SESSION['user'] = $user;
-                        return true;
+                $_SESSION['user'] = $user;
+                $_SESSION['password'] = $password;
+                return true;
 //              }
 
-                return false;
+//              return false;
         }
 
         /**
@@ -83,12 +92,6 @@ class Auth {
                 return $_SESSION['user']['username'];
         }
 }
-
-
-
-
-
-
 
         /**
          * stolen from https://stackoverflow.com/questions/2040240/php-function-to-generate-v4-uuid
