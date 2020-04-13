@@ -18,7 +18,7 @@
                 echo json_encode($servers);
         }
         else if ($_POST['action'] == "add" && isset($_POST['id'],$_POST['name'],$_POST['mac'],$_POST['ip'],$_POST['broadcast'])){
-                if($auth->hasLevel(2)) {
+                if($auth->hasLevel(3)) {
                         foreach($_POST as $k=>$v) $_POST[$k] = $db->escape_string($v);
                         $query = "INSERT INTO server VALUES ('{$_POST['id']}','{$_POST['name']}','{$_POST['ip']}','{$_POST['mac']}','{$_POST['broadcast']}')";
                         $result = $db->query($query);
@@ -34,7 +34,7 @@
                 }
         }
         else if($_POST['action'] == "remove" && isset($_POST['id'])){
-                if($auth->hasLevel(2)) {
+                if($auth->hasLevel(3)) {
                         $_POST['id'] = $db->escape_string($_POST['id']);
                         $query = "DELETE FROM server WHERE id = '{$_POST['id']}'";
                         $db->query($query);
@@ -46,7 +46,7 @@
                 }
         }
         else if($_POST['action'] == "modify" && isset($_POST['id'],$_POST['name'],$_POST['mac'],$_POST['ip'],$_POST['broadcast'])){
-                if($auth->hasLevel(2)) {
+                if($auth->hasLevel(3)) {
                         //TODO: add support for custom broadcast address
                         foreach($_POST as $k=>$v) $_POST[$k] = $db->escape_string($v);
                         $query = "UPDATE server SET name='{$_POST['name']}',ip='{$_POST['ip']}',mac='{$_POST['mac']}',broadcast='{$_POST['broadcast']}' WHERE id = '{$_POST['id']}'";
