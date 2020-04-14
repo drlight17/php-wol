@@ -1,7 +1,7 @@
 # PHP WakeOnLan KSC RAS edition with turn off and ldap auth
 A simple PHP WakeOnLan UI
 
-![Screenshot](https://github.com/drlight17/php-wol/screenshot.JPG)
+![Screenshot](https://github.com/drlight17/php-wol/raw/master/screenshot.JPG)
 
 ### How to install
 
