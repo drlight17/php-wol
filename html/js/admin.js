@@ -11,11 +11,12 @@ function getServers(){
                         const thisServer = servers[server];
                         var row = $("<tr><td>" + thisServer.name + "</td><td>" + thisServer.ip + "</td><td></td><td></td></tr>");
                         var col = $('<div class="btn-group"/>');
-                        col.append('<a class="btn btn-primary"><i class="glyphicon glyphicon-play"></i> Разбудить</a>').children().click(function(){wake(thisServer);});
+                        col.append('<a disabled class="btn btn-primary wake"><i class="glyphicon glyphicon-play"></i> Разбудить</a>').children().addClass(thisServer.name);
                         col.append($('<a class="btn btn-default"><i class="glyphicon glyphicon-refresh"></i> Обновить</a>').click(function(){ping(thisServer);}));
 
                         if(level > 1){
-                                col.append($('<a class="btn btn-primary off require-level-2"><i class="glyphicon glyphicon-off"></i> Выключить</a>').addClass(thisServer.name).click(function(){shutdown(thisServer);}));
+                                col.append($('<a disabled class="btn btn-primary off require-level-2"><i class="glyphicon glyphicon-off"></i> Выключить</a>').addClass(thisServer.name)).off();
+//                              $("a.btn.btn-primary.off.require-level-2." + server.name).attr('disabled',true).off('click');
 
                         }
                         if(level > 2){
@@ -111,7 +112,7 @@ function wake(server) {
         $.post("wake.php", {mac:server.mac, broadcast: server.broadcast})
                 .done(function(data){
                         bootbox.alert("Попытка разбудить компьютер сделана. Попробуйте обновить статус через несколько секунд.");
-                        ping(server);
+//                      ping(server);
                 })
                 .fail(function(data){
                         bootbox.alert("Ошибка:" + data.status);
@@ -129,10 +130,22 @@ function ping(server){
                         if(data.response == "alive"){
                                 server.statusField.html("Включен");
                                 server.statusField.css({color:"limegreen"});
+//                              $("a.btn.btn-primary.wake." + server.name).attr('disabled',true).prop('onclick', null);
+                                $("a.btn.btn-primary.wake." + server.name).attr('disabled',true).off();
+                                $("a.btn.btn-primary.off.require-level-2." + server.name).off();
+                                $("a.btn.btn-primary.off.require-level-2." + server.name).attr('disabled',false).click(function(){shutdown(server);});
                         }
                         if(data.response == "dead"){
                                 server.statusField.html("Отключен");
                                 server.statusField.css({color:"red"});
+//                               if ($("a.btn.btn-primary.wake." + server.name).attr('disabled') == 'true') {
+//                                  $("a.btn.btn-primary.wake." + server.name).prop('onclick', null);
+                                    $("a.btn.btn-primary.wake." + server.name).off();
+                                    $("a.btn.btn-primary.wake." + server.name).attr('disabled',false).click(function(){wake(server);});
+                                    var repl = $("a.btn.btn-primary.abort-off.require-level-2." + server.name).off();
+                                    repl.replaceWith($('<a class="btn btn-primary off require-level-2"><i class="glyphicon glyphicon-off"></i> Выключить</a>').addClass(server.name));
+                                    $("a.btn.btn-primary.off.require-level-2." + server.name).attr('disabled',true).off();
+//                              }
                         }
                 })
                 .fail(function(data){
@@ -182,12 +195,13 @@ function shutdown(server) {
                 .done(function(data){
                     if(data.response == "success"){
                         bootbox.alert("Команда выключения компьютера успешно выполнена. Попробуйте обновить статус через несколько секунд.");
-                        ping(server);
-                        var repl = $("." + server.name);
+//                      var repl = $("a.btn.btn-primary.off.require-level-2." + server.name).prop('onclick', null);
+                        var repl = $("a.btn.btn-primary.off.require-level-2." + server.name).off();
                         repl.replaceWith($('<a class="btn btn-primary abort-off require-level-2"><i class="glyphicon glyphicon-remove"></i> Отменить выключение</a>').addClass(server.name).click(function(){abortShutdown(server);}));
                     } else {
                         bootbox.alert("Команда выключения компьютера не выполнена! Может быть компьютер уже выключен?");
                     }
+                    ping(server);
                 })
                 .fail(function(data){
                         bootbox.alert("Ошибка:" + data.status);
@@ -199,12 +213,13 @@ function abortShutdown(server) {
                 .done(function(data){
                     if(data.response == "success"){
                         bootbox.alert("Команда отмены выключения компьютера успешно выполнена.");
-                        ping(server);
-                        var repl = $("." + server.name);
-                        repl.replaceWith($('<a class="btn btn-primary off require-level-2"><i class="glyphicon glyphicon-off"></i> Выключить</a>').addClass(server.name).click(function(){shutdown(server);}));
                     } else {
                         bootbox.alert("Команда отмены выключения компьютера не выполнена! Может быть компьютер уже выключен?");
                     }
+//                  var repl = $("a.btn.btn-primary.abort-off.require-level-2." + server.name).prop('onclick', null);;
+                    var repl = $("a.btn.btn-primary.abort-off.require-level-2." + server.name).off();
+                    repl.replaceWith($('<a class="btn btn-primary off require-level-2"><i class="glyphicon glyphicon-off"></i> Выключить</a>').addClass(server.name).click(function(){shutdown(server);}));
+                    ping(server);
                 })
                 .fail(function(data){
                         bootbox.alert("Ошибка:" + data.status);
