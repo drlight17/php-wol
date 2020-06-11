@@ -255,6 +255,35 @@ function showLogin(nocheck = false){
 
 window.onload = function(){
         //level = data.response.level;
+        //11.06.2020 login focus fix on load and enter key action bind
+        var input_pass = document.getElementById("password");
+        var input_login = document.getElementById("username");
+
+        $('#login-modal').on('shown.bs.modal', function() {
+            input_login.focus();
+        })
+
+        input_login.addEventListener("keyup", function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            //document.getElementById("enter").shake(4,6,700,'#CC2222');
+            // Trigger the button element with a click
+            input_pass.focus();
+        }
+        });
+
+        input_pass.addEventListener("keyup", function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Trigger the button element with a click
+
+            document.getElementById("enter").click();
+        }
+        });
         addbutton = $('body > div.container > div.btn-group.pull-right > button.btn.btn-success.require-level-3');
         //if (level<=1) addbutton.hide();
         level = 0;
@@ -266,4 +295,3 @@ window.onload = function(){
         usernameDisplay = $('#username-display');
         password = $('#password');
         showLogin();
-}
